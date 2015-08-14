@@ -188,7 +188,7 @@ def add_connection(network, user_A, user_B):
             return network
         else:
             network[user_A]['Connections'].append(user_B)
-	return network
+    return network
 
 #add_connection(network, 'John', 'Mercedes')
 #print add_connection(network, 'John', 'Walter')
@@ -256,7 +256,7 @@ def get_secondary_connections(network, user):
             for person in temp:
                 if person not in result:
                     result.append(person)
-	return result
+    return result
 
 #print get_secondary_connections(network, 'Adam')
 #add_new_user(network, 'Adam', ['FIFA 15', 'Dragon Age: Inquisition'])
