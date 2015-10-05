@@ -95,22 +95,27 @@ Freda likes to play Starfleet Commander, Ninja Hamsters, Seahorse Adventures."
 
 
 def create_data_structure(string_input):
+    friends_split = ' is connected to '
+    games_split = ' likes to play '
     input_string = [s.strip() for s in string_input.split('.') if s != '']
     # split string into list and filter empty strings
     network = {}
     for line in input_string:
-        if ' is connected to ' in line:
-            username, connections = line.split(' is connected to ')  # split line into username and connections
+        if connection in line:
+            username, connections = line.split(friends_split)  # split line into username and connections
             if username not in network:
                 network[username] = {'Connections': [], 'Games': []}  # add empty dictionaries if user is not in network
             network[username]['Connections'] = [s.strip() for s in connections.split(',')]
 
         else:
-            username, games = line.split(' likes to play ')  # split line into username and games
+            username, games = line.split(games_split)  # split line into username and games
             if username not in network:
                 network[username] = {'Connections': [], 'Games': []}  # add empty dictionaries if user is not in network
             network[username]['Games'] = [s.strip() for s in games.split(',')]
     return network
+
+# Creates a dictionary of users, their connections, and their favorite games
+# from a string using the strip and split methods.
 
 # network = create_data_structure(example_input)
 # print network
@@ -137,10 +142,13 @@ def create_data_structure(string_input):
 
 
 def get_connections(network, user):
-    if user not in network:
-        return None
-    else:
+    if user in network:
         return network[user]['Connections']
+    else:
+        return None
+
+# Returns a user's connection list based upon the user parameter specified
+# in the function input
 
 # print get_connections(network, 'John')
 # print get_connections(network, 'Adam')
@@ -160,10 +168,13 @@ def get_connections(network, user):
 
 
 def get_games_liked(network, user):
-    if user not in network:
-        return None
-    else:
+    if user in network:
         return network[user]['Games']
+    else:
+        return None
+
+# Returns a user's favorite games list based upon the user parameter specified
+# in the function input
 
 # print get_games_liked(network, 'John')
 # print get_games_liked(network, 'Adam')
@@ -187,12 +198,16 @@ def get_games_liked(network, user):
 def add_connection(network, user_a, user_b):
     if user_a not in network or user_b not in network:
         return False
-    else:
-        if user_b in network[user_a]['Connections']:
-            return network
-        else:
-            network[user_a]['Connections'].append(user_b)
+    elif user_b not in get_connections(network, user_a):
+        network[user_a]['Connections'].append(user_b)
     return network
+
+# Adds a connection to a user's connection list after checking that the user
+# to be added is not already present in the user's connection list. If either
+# of the users specificed in the input are not in the network returns False. If
+# the user to be added is already in the user to be checked list returns network
+# without changes. Otherwise adds user to be added to user to be checked list
+# and returns updated network.
 
 # add_connection(network, 'John', 'Mercedes')
 # print add_connection(network, 'John', 'Walter')
@@ -219,11 +234,13 @@ def add_connection(network, user_a, user_b):
 
 
 def add_new_user(network, user, games):
-    if user in network:
-        return network
-    else:
+    if user not in network:
         network[user] = {'Connections': [], 'Games': games}
     return network
+
+# Adds a new user to the network as long as an entry for that user does not
+# already exist. Does nothing and returns network as is if the user already
+# exists in the network.
 
 # add_new_user(network, 'John', ['FIFA 15'])
 # add_new_user(network, 'Adam', ['FIFA 15', 'Dragon Age: Inquisition'])
@@ -254,15 +271,19 @@ def get_secondary_connections(network, user):
         return None
     elif not network[user]['Connections']:
         return []
-    else:
-        connections = get_connections(network, user)
-        result = []
-        for person in connections:
-            temp = get_connections(network, person)
-            for element in temp:
-                if element not in result:
-                    result.append(element)
+    connections = get_connections(network, user)
+    result = []
+    for person in connections:
+        temp = get_connections(network, person)
+        for element in temp:
+            if element not in result:
+                result.append(element)
     return result
+
+# Creates a list of people that a specificed user's connections are themselves
+# connected to. If the specified user is not in the network returns None. If
+# the specified user has no connections returns an empty list. Otherwise returns
+# a list of all the people the specified users connections are connected to.
 
 # print get_secondary_connections(network, 'Adam')
 # add_new_user(network, 'Adam', ['FIFA 15', 'Dragon Age: Inquisition'])
@@ -285,14 +306,18 @@ def get_secondary_connections(network, user):
 def connections_in_common(network, user_a, user_b):
     if user_a not in network or user_b not in network:
         return False
-    else:
-        lista = get_connections(network, user_a)
-        listb = get_connections(network, user_b)
-        count = 0
-        for person in lista:
-            if person in listb:
-                count += 1
+    lista = get_connections(network, user_a)
+    listb = get_connections(network, user_b)
+    count = 0
+    for person in lista:
+        if person in listb:
+            count += 1
     return count
+
+# Returns an integer value for the number of connections that two users have
+# in common. If either user specified in the input is not in the network returns
+# None. Otherwise, creates a list of each users connections and counts the
+# values in common.
 
 # print connections_in_common(network, 'John', 'Walter')
 
@@ -345,6 +370,9 @@ def path_to_friend(network, start, end, path=None):
                 return newpath
     return None
 
+# If possible, uses a recursive function to trace a path between two users in
+# network. If no such connection exists, returns None.
+
 # Make-Your-Own-Procedure (MYOP)
 # -----------------------------------------------------------------------------
 
@@ -368,6 +396,11 @@ def top_5_games(network):
         all_games.append(network[user]['Games'])
     all_games = sum(all_games, [])
     return Counter(all_games).most_common(5)
+
+# Creates a flat list of all the games in users 'Games' dictionaries. Uses the
+# sum function to create a tuple of games and the number of instances of that
+# game. Uses the coutner module on that list of tuples to return the top 5 with
+# the highest occurence.
 
 # net = create_data_structure(example_input)
 # print net
