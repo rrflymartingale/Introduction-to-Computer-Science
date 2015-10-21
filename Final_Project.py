@@ -101,7 +101,7 @@ def create_data_structure(string_input):
     # split string into list and filter empty strings
     network = {}
     for line in input_string:
-        if connection in line:
+        if friends_split in line:
             username, connections = line.split(friends_split)  # split line into username and connections
             if username not in network:
                 network[username] = {'Connections': [], 'Games': []}  # add empty dictionaries if user is not in network
@@ -196,7 +196,7 @@ def get_games_liked(network, user):
 
 
 def add_connection(network, user_a, user_b):
-    if user_a not in network or user_b not in network:
+    if get_connections(networ, user_a) is None:
         return False
     elif user_b not in get_connections(network, user_a):
         network[user_a]['Connections'].append(user_b)
@@ -234,7 +234,7 @@ def add_connection(network, user_a, user_b):
 
 
 def add_new_user(network, user, games):
-    if user not in network:
+    if get_connections(networ, user) is None:
         network[user] = {'Connections': [], 'Games': games}
     return network
 
@@ -267,9 +267,9 @@ def add_new_user(network, user, games):
 
 
 def get_secondary_connections(network, user):
-    if user not in network:
+    if get_connections(network, user) is None:
         return None
-    elif not network[user]['Connections']:
+    elif not get_connections(network, user):
         return []
     connections = get_connections(network, user)
     result = []
@@ -304,7 +304,7 @@ def get_secondary_connections(network, user):
 
 
 def connections_in_common(network, user_a, user_b):
-    if user_a not in network or user_b not in network:
+    if (get_connections(network, user_a) is None) or (get_connections(network, user_b) is None):
         return False
     lista = get_connections(network, user_a)
     listb = get_connections(network, user_b)
@@ -356,7 +356,7 @@ def connections_in_common(network, user_a, user_b):
 
 
 def path_to_friend(network, start, end, path=None):
-    if (start not in network) or (end not in network) or (start == end):
+    if (get_connections(network, start) is None) or (get_connections(network, end) is None) or (start == end):
         return None
     if path is None:
         path = []
@@ -378,17 +378,15 @@ def path_to_friend(network, start, end, path=None):
 
 
 def add_game(network, user, game):
-    if user not in network:
+    if get_connections(network, user) is None:
         return False
-    elif game in network[user]['Games']:
+    elif game in get_games_liked(network, user):
         return "%s already likes %s." % (user, game)
     else:
         network[user]['Games'].append(game)
         return get_games_liked(network, user)
 
-import collections
 from collections import Counter
-
 
 def top_5_games(network):
     all_games = []
