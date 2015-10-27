@@ -196,10 +196,10 @@ def get_games_liked(network, user):
 
 
 def add_connection(network, user_a, user_b):
-    if get_connections(networ, user_a) is None:
+    if network[user_a] or network[user_b] is None:
         return False
     elif user_b not in get_connections(network, user_a):
-        network[user_a]['Connections'].append(user_b)
+        get_connections(network, user_a).append(user_b)
     return network
 
 # Adds a connection to a user's connection list after checking that the user
@@ -234,7 +234,7 @@ def add_connection(network, user_a, user_b):
 
 
 def add_new_user(network, user, games):
-    if get_connections(networ, user) is None:
+    if user not in network:
         network[user] = {'Connections': [], 'Games': games}
     return network
 
@@ -269,15 +269,13 @@ def add_new_user(network, user, games):
 def get_secondary_connections(network, user):
     if get_connections(network, user) is None:
         return None
-    elif not get_connections(network, user):
-        return []
     connections = get_connections(network, user)
     result = []
     for person in connections:
-        temp = get_connections(network, person)
-        for element in temp:
-            if element not in result:
-                result.append(element)
+        person_to_check = get_connections(network, person)
+        for friend in person_to_check:
+            if friend not in result:
+                result.append(friend)
     return result
 
 # Creates a list of people that a specificed user's connections are themselves
