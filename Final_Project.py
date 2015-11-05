@@ -196,9 +196,9 @@ def get_games_liked(network, user):
 
 
 def add_connection(network, user_a, user_b):
-    if network[user_a] is None or network[user_b] is None:
+    if (user_a not in network) or (user_b not in network):
         return False
-    elif user_b not in get_connections(network, user_a):
+    if user_b not in get_connections(network, user_a):
         get_connections(network, user_a).append(user_b)
     return network
 
